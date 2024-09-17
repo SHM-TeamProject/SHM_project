@@ -11,3 +11,10 @@
 - **Version** : Java 22
 - **IDE** : Android Studio
 - **Framework** : Android
+
+## 앱 스크린샷
+① 앱 시작화면<br>
+<img src=https://github.com/user-attachments/assets/3a6420f2-37e6-4d1b-b9b8-448fa7e4e775 width="300" height="400"/>
+
+② 앱 일정 저장 화면<br>
+<img src="https://github.com/user-attachments/assets/acfb8a3d-f8b3-4dd6-9c41-df6bb405b09f" width="300" height="400"/>
