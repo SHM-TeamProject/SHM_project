@@ -21,6 +21,12 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
     private lateinit var cancelBtn: Button
     private lateinit var saveBtn: Button
     private lateinit var timePicker: TimePicker
+    private var startCheckCount:Int = 0
+    private var endCheckCount:Int = 0
+    private var startTimeHour:Int = 0
+    private var startTimeMin:Int = 0
+    private var endTimeHour:Int = 0
+    private var endTimeMin:Int = 0
     private var startTime:Int = 0
     private var endTime:Int = 0
     private var checkStartBtn:Boolean = false
@@ -37,27 +43,8 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
         saveBtn = findViewById(R.id.save_btn)
         timePicker = findViewById(R.id.timePicker)
         timePicker.setOnTimeChangedListener(this)
-
-        startBtn.setOnClickListener {
-            if(!checkStartBtn) {
-                timePicker.visibility = View.VISIBLE
-                checkStartBtn = true
-            }
-            else {
-                timePicker.visibility = View.GONE
-                checkStartBtn = false
-            }
-        }
-        endBtn.setOnClickListener {
-            if(!checkEndBtn) {
-                timePicker.visibility = View.VISIBLE
-                checkEndBtn = true
-            }
-            else {
-                timePicker.visibility = View.GONE
-                checkEndBtn = false
-            }
-        }
+        checkClickStartBtn()
+        checkClickEndBtn()
         cancelBtn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             setResult(RESULT_OK, intent)
@@ -81,6 +68,69 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
 
         }
     }
+    private fun checkClickStartBtn(){
+        startBtn.setOnClickListener {
+            if(!checkStartBtn) {
+                if(checkEndBtn){
+                    timePicker.visibility = View.GONE
+                    checkEndBtn = false
+                }
+                timePicker.visibility = View.VISIBLE
+                checkStartBtn = true
+                if(startCheckCount < 1)
+                    startCheckCount++
+            }
+            else {
+                timePicker.visibility = View.GONE
+                checkStartBtn = false
+            }
+            if(startCheckCount < 1){
+                timePicker.hour = 17
+                timePicker.minute = 0
+            }
+            else{
+                val currentSetStartTime:List<String> = startBtn.text.toString().split(':')
+                val currentSetStartHour:List<String> = currentSetStartTime[0].split(' ')
+                if(currentSetStartHour[0] == "오후")
+                    timePicker.hour = currentSetStartHour[1].toInt() + 12
+                else
+                    timePicker.hour = currentSetStartHour[1].toInt()
+                timePicker.minute = currentSetStartTime[1].toInt()
+            }
+        }
+    }
+
+    private fun checkClickEndBtn(){
+        endBtn.setOnClickListener {
+            if(!checkEndBtn) {
+                if(checkStartBtn){
+                    timePicker.visibility = View.GONE
+                    checkStartBtn = false
+                }
+                timePicker.visibility = View.VISIBLE
+                checkEndBtn = true
+                if(endCheckCount < 1)
+                    endCheckCount++
+            }
+            else {
+                timePicker.visibility = View.GONE
+                checkEndBtn = false
+            }
+            if(endCheckCount < 1){
+                timePicker.hour = 18
+                timePicker.minute = 0
+            }
+            else{
+                val currentSetEndTime:List<String> = endBtn.text.toString().split(':')
+                val currentSetEndHour:List<String> = currentSetEndTime[0].split(' ')
+                if(currentSetEndHour[0] == "오후")
+                    timePicker.hour = currentSetEndHour[1].toInt() + 12
+                else
+                    timePicker.hour = currentSetEndHour[1].toInt()
+                timePicker.minute = currentSetEndTime[1].toInt()
+            }
+        }
+    }
     override fun onTimeChanged(view: TimePicker?, hourOfDay: Int, minute: Int){
         val meridiem:String
         val hour:Int
@@ -94,7 +144,12 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
                 hour = hourOfDay
             }
             startTime = hourOfDay * 60 + minute
-            startBtn.text = meridiem + " ${hour}:${minute}"
+            var strMin:String = ""
+            if(minute < 10)
+                strMin += "0" + "${minute}"
+            else
+                strMin = "${minute}"
+            startBtn.text = meridiem + " ${hour}:${strMin}"
         }
         else if(checkEndBtn){
             if(hourOfDay > 12) {
@@ -106,7 +161,14 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
                 hour = hourOfDay
             }
             endTime = hourOfDay * 60 + minute
-            endBtn.text = meridiem + " ${hour}:${minute}"
+            endTimeHour = hourOfDay
+            endTimeMin = minute
+            var strMin:String = ""
+            if(minute < 10)
+                strMin += "0" + "${minute}"
+            else
+                strMin = "${minute}"
+            endBtn.text = meridiem + " ${hour}:${strMin}"
         }
     }
 }
