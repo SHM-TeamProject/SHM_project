@@ -1,19 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TaskAddActivity">
-
-    <TextView
-        android:id="@+id/minseokTextView"
-        android:layout_width="wrap_content"
+    android:orientation="vertical"
+    tools:context=".TaskAddActivity"
+    android:padding="0dp">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="10dp">-->
+<!--        <Button-->
+<!--            android:id="@+id/back_btn"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/invisible"-->
+<!--            android:drawableLeft="@drawable/ic_back_btn" />-->
+<!--    </LinearLayout>-->
+    <EditText
+        android:id="@+id/task_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="여기다가 만들면 된다 민석"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:hint="제목 "
+        android:nextFocusDown="@id/task_content"
+        android:singleLine="true"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textSize="20sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        <Button
+            android:id="@+id/startTaskTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="오후 5:00"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_weight="2"
+            android:background="@drawable/time_picker_show_button"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="~"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_weight="1"
+            />
+        <Button
+            android:id="@+id/endTaskTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="오후 6:00"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_weight="2"
+            android:background="@drawable/time_picker_show_button"
+            />
+    </LinearLayout>
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        />
+    <EditText
+        android:id="@+id/task_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="내용 "
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:singleLine="true"
+        android:textSize="20sp" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_grey">
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="취소"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="@color/invisible"
+            />
+        <Button
+            android:id="@+id/save_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:text="저장"
+            android:textStyle="bold"
+            android:background="@color/invisible"
+            />
+    </LinearLayout>
+
+</LinearLayout>

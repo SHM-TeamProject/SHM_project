@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.EditText
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,7 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var getAddedTaskResult: ActivityResultLauncher<Intent>
     private lateinit var calendarView: CalendarView
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
@@ -23,7 +26,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addButton: Button
     private val tasksMap = mutableMapOf<String, List<String>>()
     private var selectedDate: String = ""
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,11 +53,38 @@ class MainActivity : AppCompatActivity() {
         val todayDate = dateFormat.format(calendar.time)
 
         inputText.hint = todayDate + "에 일정 추가"
+        val tasks = mutableListOf<String>()
 
+        getAddedTaskResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            result -> if(result.resultCode == RESULT_OK){
+                val title = result.data?.getStringExtra("title") ?: ""
+                val startTime = result.data?.getStringExtra("startTime") ?: ""
+                val endTime = result.data?.getStringExtra("endTime") ?: ""
+                val content = result.data?.getStringExtra("content") ?: ""
+                var time = startTime + " ~ " + endTime
+                val completeTask = title + " " + time + " " + content
+
+                if(completeTask != "") {
+                    tasks.add(completeTask)
+                    tasksMap[selectedDate] = tasks
+                    updateTaskList()
+                }
+            }
+        }
         /** 플러스 버튼을 클릭했을 때, 프레그먼트 이동시키기 **/
         addButton.setOnClickListener {
-            val intent = Intent(this, TaskAddActivity::class.java) // 액티비티 이동
-            startActivity(intent)
+            if(inputText.text.toString() != "") {
+                tasks.add(inputText.text.toString())
+                tasksMap[selectedDate] = tasks
+                updateTaskList()
+                inputText.setText(null)
+            }
+            else{
+                print("addTask")
+                val intent = Intent(this, TaskAddActivity::class.java) // 액티비티 이동
+                getAddedTaskResult.launch(intent)
+            }
+
         }
     }
 
