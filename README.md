@@ -12,6 +12,9 @@
 - **IDE** : Android Studio
 - **Framework** : Android
 
+## 앱 업데이트
+2024.09.28 - 선택한 일정의 일정을 클릭하면, 수정과 삭제가 가능하게 하였습니다.
+
 ## 앱 스크린샷
 ① 앱 시작화면<br>
 <img src=https://github.com/user-attachments/assets/3a6420f2-37e6-4d1b-b9b8-448fa7e4e775 width="300" height="400"/>
