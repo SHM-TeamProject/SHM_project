@@ -23,8 +23,6 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
     private lateinit var timePicker: TimePicker
     private var startCheckCount:Int = 0
     private var endCheckCount:Int = 0
-    private var startTimeHour:Int = 0
-    private var startTimeMin:Int = 0
     private var endTimeHour:Int = 0
     private var endTimeMin:Int = 0
     private var startTime:Int = 0
