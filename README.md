@@ -13,16 +13,16 @@
 - **Framework** : Android
 
 ## 앱 업데이트
-[2024.09.15 ver]<br>
+<b>[2024.09.15 ver]</b><br>
 캘린더의 기본 UI를 만들었습니다. 달력의 날짜를 선택하면 해당 월과 날짜에 맞게 앱 아래의 텍스트가 바뀝니다.
 
-[2024.09.17 ver]<br>
+<b>[2024.09.17 ver]</b><br>
 캘린더 앱의 '+'을 누르면 일정의 제목과 내용, 시간을 입력할 수 있는 Activity를 추가하였습니다.
 
-[2024.09.21 ver]<br>
+<b>[2024.09.21 ver]</b><br>
 캘린더의 일정의 제목과 내용을 DB에 추가되도록 구현하였습니다.
 
-[2024.09.28 ver]<br>
+<b>[2024.09.28 ver]</b><br>
 선택한 일정의 일정을 클릭하면, 수정과 삭제가 가능하도록 구현하였습니다.
 
 ## 앱 스크린샷
@@ -31,3 +31,6 @@
 
 ② 앱 일정 저장 화면<br>
 <img src="https://github.com/user-attachments/assets/acfb8a3d-f8b3-4dd6-9c41-df6bb405b09f" width="300" height="400"/>
+
+③ 앱 일정 수정 화면<br>
+<img src="https://github.com/user-attachments/assets/5c0f08f9-ca76-4b09-9625-dc84c7fd51c1" width="300" height="400"/>
