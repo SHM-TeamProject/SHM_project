@@ -11,9 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -111,13 +108,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // + 버튼을 눌렀을 때, 일정 추가 함수가 필요함.
-    private fun addEvents() {
-
-    }
-
     private fun updateTaskList() {
-        val filteredTasks = allTasks.filter { it.date == selectedDate }
+        val filteredTasks: MutableList<Task> = allTasks.filter { it.date == selectedDate }.toMutableList()
         taskAdapter = TaskAdapter(filteredTasks)
         recyclerView.adapter = taskAdapter
     }
