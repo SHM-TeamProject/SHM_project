@@ -8,8 +8,12 @@ import android.widget.EditText
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -26,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addButton: Button
     private val tasksMap = mutableMapOf<String, List<String>>()
     private var selectedDate: String = ""
+    private lateinit var taskViewModel: TaskViewModel
+    private lateinit var allTasks: List<Task>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +43,16 @@ class MainActivity : AppCompatActivity() {
         inputText = findViewById(R.id.inputText)
         addButton = findViewById(R.id.addButton)
 
+        // ViewModel 인스턴스 가져오기
+        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        // 일정이 변경되면 RecyclerView 업데이트
+        taskViewModel.allTasks.observe(this) { tasks ->
+            allTasks = tasks
+            updateTaskList()
+        }
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val calendar = Calendar.getInstance().apply {
@@ -55,24 +70,30 @@ class MainActivity : AppCompatActivity() {
         inputText.hint = todayDate + "에 일정 추가"
         val tasks = mutableListOf<String>()
 
-        getAddedTaskResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-            result -> if(result.resultCode == RESULT_OK){
+        getAddedTaskResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
                 val title = result.data?.getStringExtra("title") ?: ""
                 val startTime = result.data?.getStringExtra("startTime") ?: ""
                 val endTime = result.data?.getStringExtra("endTime") ?: ""
                 val content = result.data?.getStringExtra("content") ?: ""
-                var time = startTime + " ~ " + endTime
-                val completeTask = title + " " + time + " " + content
+                val time = "$startTime ~ $endTime"
 
-                if(completeTask != "") {
-                    tasks.add(completeTask)
-                    tasksMap[selectedDate] = tasks
-                    updateTaskList()
-                }
+                // 새로운 Task 객체 생성
+                val newTask = Task(title = title, startTime = startTime, endTime = endTime, content = content, date = selectedDate)
+
+                // ViewModel을 통해 Task를 데이터베이스에 저장
+                taskViewModel.insert(newTask)
+
+                // 일정이 추가된 후 UI 업데이트
+                updateTaskList()
             }
         }
+
         /** 플러스 버튼을 클릭했을 때, 프레그먼트 이동시키기 **/
         addButton.setOnClickListener {
+//            CoroutineScope(Dispatchers.IO).launch {
+//                taskViewModel.deleteAllTasks() // 모든 일정 삭제
+//            }
             if(inputText.text.toString() != "") {
                 tasks.add(inputText.text.toString())
                 tasksMap[selectedDate] = tasks
@@ -81,7 +102,9 @@ class MainActivity : AppCompatActivity() {
             }
             else{
                 print("addTask")
-                val intent = Intent(this, TaskAddActivity::class.java) // 액티비티 이동
+//                val intent = Intent(this, TaskAddActivity::class.java) // 액티비티 이동
+                val intent = Intent(this, TaskAddActivity::class.java)
+                intent.putExtra("selectedDate", selectedDate) // 선택된 날짜 전달
                 getAddedTaskResult.launch(intent)
             }
 
@@ -94,8 +117,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTaskList() {
-        val tasks = tasksMap[selectedDate] ?: emptyList()
-        taskAdapter = TaskAdapter(tasks)
+        val filteredTasks = allTasks.filter { it.date == selectedDate }
+        taskAdapter = TaskAdapter(filteredTasks)
         recyclerView.adapter = taskAdapter
     }
 }

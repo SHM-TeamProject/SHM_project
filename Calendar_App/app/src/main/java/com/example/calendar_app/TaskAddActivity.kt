@@ -9,9 +9,15 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.coroutines.coroutineContext
 
 class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
     private lateinit var titleEdit: EditText
@@ -29,6 +35,7 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
     private var endTime:Int = 0
     private var checkStartBtn:Boolean = false
     private var checkEndBtn:Boolean = false
+    private lateinit var taskViewModel: TaskViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_add)
@@ -41,6 +48,7 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
         saveBtn = findViewById(R.id.save_btn)
         timePicker = findViewById(R.id.timePicker)
         timePicker.setOnTimeChangedListener(this)
+        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
         checkClickStartBtn()
         checkClickEndBtn()
         cancelBtn.setOnClickListener {
@@ -49,21 +57,33 @@ class TaskAddActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
             finish()
         }
         saveBtn.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            if(titleEdit.text.toString() != "" && startTime <= endTime){
-                intent.putExtra("title", titleEdit.text.toString())
-                intent.putExtra("startTime", startBtn.text.toString())
-                intent.putExtra("endTime", endBtn.text.toString())
-                intent.putExtra("content", contentEdit.text.toString())
-                setResult(RESULT_OK, intent)
-                finish()
+            // ViewModel 인스턴스 가져오기
+            val title = titleEdit.text.toString()
+            val startTimeText = startBtn.text.toString().substringAfter(" ")
+            val endTimeText = endBtn.text.toString().substringAfter(" ")
+            val content = contentEdit.text.toString()
+            val currentDate = intent.getStringExtra("selectedDate") ?: SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Calendar.getInstance().time)
+
+
+            if (title.isNotEmpty() && startTimeText.isNotEmpty() && endTimeText.isNotEmpty() && startTime <= endTime) {
+                val newTask = Task(title = title, startTime = startTimeText, endTime = endTimeText, content = content, date = currentDate)
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    taskViewModel.insert(newTask)
+
+                    withContext(Dispatchers.Main) {
+                        val intent = Intent(this@TaskAddActivity, MainActivity::class.java)
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    }
+                }
             }
-            else if(titleEdit.text.toString() == ""){
+            else if (title.isEmpty()) {
                 Toast.makeText(applicationContext, "제목을 작성해야 합니다.", Toast.LENGTH_SHORT).show()
             }
-            else if(startTime > endTime)
-                Toast.makeText(applicationContext, "죵료 시간은 시작 시간 이후여야 합니다ㅇ.", Toast.LENGTH_SHORT).show()
-
+            else if (startTime > endTime) {
+                Toast.makeText(applicationContext, "종료 시간은 시작 시간 이후여야 합니다.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
     private fun checkClickStartBtn(){
