@@ -58,18 +58,18 @@ class MainActivity : AppCompatActivity() {
             val calendar = Calendar.getInstance().apply {
                 set(year, month, dayOfMonth)
             }
+            val dateFormat = SimpleDateFormat("M'월' d'일'", Locale.getDefault())
+            val todayDate = dateFormat.format(calendar.time)
+
+            inputText.hint = todayDate + "에 일정 추가"
             selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
             updateTaskList()
         }
 
         /** 오늘의 날짜 추가하기 **/
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("M'월' d'일'", Locale.getDefault())
-        val todayDate = dateFormat.format(calendar.time)
 
-        inputText.hint = todayDate + "에 일정 추가"
         val tasks = mutableListOf<String>()
-
         getAddedTaskResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val title = result.data?.getStringExtra("title") ?: ""
