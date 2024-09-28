@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTaskList() {
-        val filteredTasks: MutableList<Task> = allTasks.filter { it.date == selectedDate }.toMutableList()
+        val filteredTasks: MutableList<Task> = allTasks.filter { it.date == selectedDate }.toMutableList() // filter로 나오는 불변 리스트를 MutableList로 변경.
         taskAdapter = TaskAdapter(filteredTasks)
         recyclerView.adapter = taskAdapter
     }

@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -33,16 +35,34 @@ class TaskAdapter(private val tasks: MutableList<Task>) :
                 }.show()
         }
 
-        // 클릭한 item을 클랙해서 뜬 dialog에서 수정을 클릭했을 때의 함수!
+        // 클릭한 item을 클릭해서 뜬 dialog에서 수정을 클릭했을 때의 함수!
         private fun showEditDialog(position: Int) {
-            /*TODO: 수정했을 때 동작 적어야 함.*/
+            val editTaskDialog = EditTaskDialog(view.context)
+            val curTitle = tasks[position].title // 클릭한 item의 현재 제목값
+            val curContent = tasks[position].content // 클릭한 item의 현재 내용값
+            
+            // 클릭한 item의 제목과 내용을 Dialog에 세팅하기
+            editTaskDialog.setInputValues(curTitle, curContent)
 
+            // 입력한 제목과 내용을 바꿀 리스너 세팅하기
+            editTaskDialog.setOnEditClickListener { title, content ->
+                editTask(position, title, content)
+            }
+
+            editTaskDialog.show()
         }
 
-        // 클릭한 item을 클랙해서 뜬 dialog에서 삭제 클릭했을 때의 함수!
+        // 클릭한 item을 클릭해서 뜬 dialog에서 삭제 클릭했을 때의 함수!
         private fun deleteTask(position: Int) {
             tasks.removeAt(position)
             notifyItemRemoved(position)
+        }
+
+        // 클릭한 item 객체(Task)를 수정하는 함수.
+        private fun editTask(position: Int, editTitle: String, editContent: String) {
+            tasks[position].title = editTitle
+            tasks[position].content = editContent
+            notifyItemChanged(position)
         }
 
     }
