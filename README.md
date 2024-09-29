@@ -31,7 +31,7 @@
 
 ① 버튼을 클릭하지 않은 상태<br>
 <img src="https://github.com/user-attachments/assets/5e228765-1668-481e-9454-bbaf26595a78" width="100" height="100"/><br>
-② 버튼을 클릭한 상태<br>
+② 버튼을 클릭하고 있는 상태<br>
 <img src="https://github.com/user-attachments/assets/e4caefbf-2586-4905-8579-8eb1cca891ef" width="100" height="100"/><br>
 
 ## 앱 스크린샷
