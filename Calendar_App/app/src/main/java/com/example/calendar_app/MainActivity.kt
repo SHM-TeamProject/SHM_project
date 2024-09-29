@@ -14,6 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -96,6 +99,14 @@ class MainActivity : AppCompatActivity() {
 //            }
 
             if(inputText.text.toString() != "") {
+                val taskTitle = inputText.text.toString()
+
+                // 데이터베이스에 새로운 일정 추가
+                CoroutineScope(Dispatchers.IO).launch {
+                    val newTask = Task(title = taskTitle, startTime = "", endTime = "", content = "", date = selectedDate) // Task 객체 생성
+                    viewModel.insert(newTask) // ViewModel을 통해 데이터베이스에 삽입
+                }
+
                 tasks.add(inputText.text.toString())
                 tasksMap[selectedDate] = tasks
                 updateTaskList()
@@ -103,8 +114,7 @@ class MainActivity : AppCompatActivity() {
             }
             else{
                 print("addTask")
-//                val intent = Intent(this, TaskAddActivity::class.java) // 액티비티 이동
-                val intent = Intent(this, TaskAddActivity::class.java)
+                val intent = Intent(this, TaskAddActivity::class.java) // 엑티비티 이동
                 intent.putExtra("selectedDate", selectedDate) // 선택된 날짜 전달
                 getAddedTaskResult.launch(intent)
             }
