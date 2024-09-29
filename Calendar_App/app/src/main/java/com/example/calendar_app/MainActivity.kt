@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addButton: Button
     private val tasksMap = mutableMapOf<String, List<String>>()
     private var selectedDate: String = ""
-    private lateinit var taskViewModel: TaskViewModel
+    private lateinit var viewModel: TaskViewModel
     private lateinit var allTasks: List<Task>
 
 
@@ -41,12 +41,12 @@ class MainActivity : AppCompatActivity() {
         addButton = findViewById(R.id.addButton)
 
         // ViewModel 인스턴스 가져오기
-        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // 일정이 변경되면 RecyclerView 업데이트
-        taskViewModel.allTasks.observe(this) { tasks ->
+        viewModel.allTasks.observe(this) { tasks ->
             allTasks = tasks
             updateTaskList()
         }
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 val newTask = Task(title = title, startTime = startTime, endTime = endTime, content = content, date = selectedDate)
 
                 // ViewModel을 통해 Task를 데이터베이스에 저장
-                taskViewModel.insert(newTask)
+                viewModel.insert(newTask)
 
                 // 일정이 추가된 후 UI 업데이트
                 updateTaskList()
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateTaskList() {
         val filteredTasks: MutableList<Task> = allTasks.filter { it.date == selectedDate }.toMutableList() // filter로 나오는 불변 리스트를 MutableList로 변경.
-        taskAdapter = TaskAdapter(filteredTasks)
+        taskAdapter = TaskAdapter(filteredTasks, viewModel)
         recyclerView.adapter = taskAdapter
     }
 }

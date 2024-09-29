@@ -37,10 +37,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Task 업데이트
-    fun update(task: Task) = viewModelScope.launch {
+    fun update(taskId: Int, title: String, content: String) = viewModelScope.launch {
         try {
-            repository.update(task)
-            getAllTasks()
+            repository.update(taskId, title, content)
+            getAllTasks() // 업데이트 후 Task 목록 갱신
         } catch (e: Exception) {
             // 오류 처리
         }

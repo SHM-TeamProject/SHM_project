@@ -11,11 +11,11 @@ interface TaskDao {
     @Insert
     suspend fun insert(task: Task)
 
-    @Update
-    suspend fun update(task: Task)
-
     @Delete
     suspend fun delete(task: Task)
+
+    @Query("UPDATE tasks SET title = :title, content = :content WHERE id = :taskId")
+    suspend fun update(taskId: Int, title: String, content: String)
 
     @Query("SELECT * FROM tasks")
     suspend fun getAllTasks(): List<Task>

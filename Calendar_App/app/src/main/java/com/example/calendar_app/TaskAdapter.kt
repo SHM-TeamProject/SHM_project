@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TaskAdapter(private val tasks: MutableList<Task>) :
+class TaskAdapter(private val tasks: MutableList<Task>, private val viewModel: TaskViewModel) :
     RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     inner class TaskViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -46,7 +46,9 @@ class TaskAdapter(private val tasks: MutableList<Task>) :
 
             // 입력한 제목과 내용을 바꿀 리스너 세팅하기
             editTaskDialog.setOnEditClickListener { title, content ->
-                editTask(position, title, content)
+                val taskId = tasks[position].id // 해당 Task의 ID를 가져옴
+                viewModel.update(taskId, title, content) // 데이터베이스에 업데이트
+                editTask(position, title, content) // RecyclerView의 리스트도 업데이트
             }
 
             editTaskDialog.show()
@@ -54,6 +56,7 @@ class TaskAdapter(private val tasks: MutableList<Task>) :
 
         // 클릭한 item을 클릭해서 뜬 dialog에서 삭제 클릭했을 때의 함수!
         private fun deleteTask(position: Int) {
+            viewModel.delete(tasks[position])
             tasks.removeAt(position)
             notifyItemRemoved(position)
         }
