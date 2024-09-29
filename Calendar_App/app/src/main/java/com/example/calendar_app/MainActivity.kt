@@ -1,7 +1,10 @@
 package com.example.calendar_app
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.EditText
@@ -91,6 +94,7 @@ class MainActivity : AppCompatActivity() {
 //            CoroutineScope(Dispatchers.IO).launch {
 //                taskViewModel.deleteAllTasks() // 모든 일정 삭제
 //            }
+
             if(inputText.text.toString() != "") {
                 tasks.add(inputText.text.toString())
                 tasksMap[selectedDate] = tasks
