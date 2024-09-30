@@ -1,7 +1,10 @@
 package com.example.calendar_app
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.EditText
@@ -30,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addButton: Button
     private val tasksMap = mutableMapOf<String, List<String>>()
     private var selectedDate: String = ""
-    private lateinit var taskViewModel: TaskViewModel
+    private lateinit var viewModel: TaskViewModel
     private lateinit var allTasks: List<Task>
 
 
@@ -44,12 +47,12 @@ class MainActivity : AppCompatActivity() {
         addButton = findViewById(R.id.addButton)
 
         // ViewModel 인스턴스 가져오기
-        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // 일정이 변경되면 RecyclerView 업데이트
-        taskViewModel.allTasks.observe(this) { tasks ->
+        viewModel.allTasks.observe(this) { tasks ->
             allTasks = tasks
             updateTaskList()
         }
@@ -80,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                 val newTask = Task(title = title, startTime = startTime, endTime = endTime, content = content, date = selectedDate)
 
                 // ViewModel을 통해 Task를 데이터베이스에 저장
-                taskViewModel.insert(newTask)
+                viewModel.insert(newTask)
 
                 // 일정이 추가된 후 UI 업데이트
                 updateTaskList()
@@ -92,7 +95,16 @@ class MainActivity : AppCompatActivity() {
 //            CoroutineScope(Dispatchers.IO).launch {
 //                taskViewModel.deleteAllTasks() // 모든 일정 삭제
 //            }
+
             if(inputText.text.toString() != "") {
+                val taskTitle = inputText.text.toString()
+
+                // 데이터베이스에 새로운 일정 추가
+                CoroutineScope(Dispatchers.IO).launch {
+                    val newTask = Task(title = taskTitle, startTime = "", endTime = "", content = "", date = selectedDate) // Task 객체 생성
+                    viewModel.insert(newTask) // ViewModel을 통해 데이터베이스에 삽입
+                }
+
                 tasks.add(inputText.text.toString())
                 tasksMap[selectedDate] = tasks
                 updateTaskList()
@@ -100,8 +112,7 @@ class MainActivity : AppCompatActivity() {
             }
             else{
                 print("addTask")
-//                val intent = Intent(this, TaskAddActivity::class.java) // 액티비티 이동
-                val intent = Intent(this, TaskAddActivity::class.java)
+                val intent = Intent(this, TaskAddActivity::class.java) // 엑티비티 이동
                 intent.putExtra("selectedDate", selectedDate) // 선택된 날짜 전달
                 getAddedTaskResult.launch(intent)
             }
@@ -109,14 +120,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // + 버튼을 눌렀을 때, 일정 추가 함수가 필요함.
-    private fun addEvents() {
-
-    }
-
     private fun updateTaskList() {
-        val filteredTasks = allTasks.filter { it.date == selectedDate }
-        taskAdapter = TaskAdapter(filteredTasks)
+        val filteredTasks: MutableList<Task> = allTasks.filter { it.date == selectedDate }.toMutableList() // filter로 나오는 불변 리스트를 MutableList로 변경.
+        taskAdapter = TaskAdapter(filteredTasks, viewModel)
         recyclerView.adapter = taskAdapter
     }
 }

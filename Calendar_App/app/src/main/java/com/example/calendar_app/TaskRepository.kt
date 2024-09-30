@@ -15,8 +15,8 @@ class TaskRepository(private val taskDao: TaskDao) {
     }
 
     // Task 업데이트
-    suspend fun update(task: Task) {
-        taskDao.update(task)
+    suspend fun update(taskId: Int, title: String, content: String) {
+        taskDao.update(taskId, title, content)
     }
 
     // Task 삭제
