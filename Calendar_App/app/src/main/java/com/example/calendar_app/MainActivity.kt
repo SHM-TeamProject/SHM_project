@@ -66,8 +66,6 @@ class MainActivity : AppCompatActivity() {
             updateTaskList()
         }
 
-        /** 오늘의 날짜 추가하기 **/
-        val calendar = Calendar.getInstance()
 
         val tasks = mutableListOf<String>()
         getAddedTaskResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
