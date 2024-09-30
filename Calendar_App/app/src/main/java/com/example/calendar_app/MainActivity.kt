@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var inputText: EditText
     private lateinit var addButton: Button
-    private val tasksMap = mutableMapOf<String, List<String>>()
     private var selectedDate: String = ""
     private lateinit var viewModel: TaskViewModel
     private lateinit var allTasks: List<Task>
@@ -74,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         getAddedTaskResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val title = result.data?.getStringExtra("title") ?: ""
+                selectedDate = result.data?.getStringExtra("chagedDate") ?: ""
                 val startTime = result.data?.getStringExtra("startTime") ?: ""
                 val endTime = result.data?.getStringExtra("endTime") ?: ""
                 val content = result.data?.getStringExtra("content") ?: ""
@@ -95,7 +95,8 @@ class MainActivity : AppCompatActivity() {
 //            CoroutineScope(Dispatchers.IO).launch {
 //                taskViewModel.deleteAllTasks() // 모든 일정 삭제
 //            }
-
+            //앱 첫 실행 시 날짜 선택을 하지 않아 CalendarView의 setOnDateChangeListner가 동작하지 않으므로 날짜를 받아옴.
+            selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarView.date)
             if(inputText.text.toString() != "") {
                 val taskTitle = inputText.text.toString()
 
@@ -106,12 +107,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 tasks.add(inputText.text.toString())
-                tasksMap[selectedDate] = tasks
                 updateTaskList()
                 inputText.setText(null)
             }
             else{
-                print("addTask")
                 val intent = Intent(this, TaskAddActivity::class.java) // 엑티비티 이동
                 intent.putExtra("selectedDate", selectedDate) // 선택된 날짜 전달
                 getAddedTaskResult.launch(intent)
